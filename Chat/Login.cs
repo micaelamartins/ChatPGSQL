@@ -22,7 +22,6 @@ namespace Chat
         {
             InitializeComponent();
         }
-        //
         private void Login_Load(object sender, EventArgs e)
         {
             getConnectionString();
@@ -43,9 +42,6 @@ namespace Chat
             }
             string result = System.Text.Encoding.UTF8.GetString(hash);
 
-
-            
-            
             bool connectionWorks = getConnectionString();
             if (connectionWorks == true)
             {
@@ -60,8 +56,7 @@ namespace Chat
                 List<DataRow> drList = dt.AsEnumerable().ToList();
 
                 try
-                { 
-
+                {
                     bool cont = true;
                     //compare all values from list to the username inserted
                     foreach (DataRow str in drList)
@@ -80,7 +75,7 @@ namespace Chat
                         string sql1 = "INSERT INTO users(username, password) VALUES ('" + username.ToString() + "','" + result.ToString() + "')";
                         NpgsqlCommand cmdo = new NpgsqlCommand(sql1, con);
                         //executes the query
-                        
+
                         cmdo.ExecuteNonQuery();
                         lb_alert.Text = "Registo Efetuado com Sucesso!";
                         con.Close();
@@ -98,14 +93,12 @@ namespace Chat
             string password = textbox_password.Text;
 
             // convert the password inserted to sha256 and then compares it to the hash saved on db
-
             byte[] hash;
             using (SHA256CryptoServiceProvider sha256 = new SHA256CryptoServiceProvider())
             {
                 byte[] hashdata = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
                 hash = hashdata;
             }
-
 
             DataTable dt = new DataTable();
             bool connectionWorks = getConnectionString();
@@ -156,7 +149,6 @@ namespace Chat
             //Tests the current connection
             try
             {
-
                 NpgsqlConnection testCurrentConnString = new NpgsqlConnection(conn);
                 testCurrentConnString.Open();
                 testCurrentConnString.Close();
@@ -174,6 +166,11 @@ namespace Chat
             //Goes through each connection string
             foreach (string conn_string in ServersArray)
             {
+                //If the connection string is equal to the connection string tested previously, skip
+                if (conn_string == conn)
+                {
+                    continue;
+                }
                 //Tests a connection with the current connection string
                 NpgsqlConnection dbcon = new NpgsqlConnection(conn_string);
                 try
@@ -194,10 +191,3 @@ namespace Chat
         }
     }
 }
-
-
-
-
-
-
-

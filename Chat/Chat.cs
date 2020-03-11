@@ -19,14 +19,10 @@ namespace Chat
         {
             InitializeComponent();
             lb_username.Text = text;
-
-
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
-
             DataTable dt = new DataTable();
             NpgsqlConnection con = new NpgsqlConnection(conn);
             con.Open();
@@ -35,23 +31,15 @@ namespace Chat
             dt.Load(cmd.ExecuteReader());
             List<DataRow> drList = dt.AsEnumerable().ToList();
 
-            
-
             foreach (DataRow str in drList)
             {
 
                 Mensagem msg = new Mensagem(str.ItemArray[0].ToString(), DateTime.Parse(str.ItemArray[3].ToString()), str.ItemArray[1].ToString(), str.ItemArray[2].ToString());
                 //Adding Message to Listbox
                 lb_chat.Items.Add(msg);
-
             }
 
             focus_last_message();
-
-
-
-           
-
              /*  //Calling and running the task
                Task.Run(() => HandleUpdates(pool, lb_chat));*/
         }
@@ -102,10 +90,6 @@ namespace Chat
                         cmdo.ExecuteNonQuery();
                         //  lb_chat.Items.Add(mensagem);
                         con.Close();
-
-
-
-
                     }
                     catch (Exception ex)
                     {
@@ -113,13 +97,8 @@ namespace Chat
 
                         Form1_Load(sender, e);
                     }
-
-
                     //Clean up
                     tb_mensagem.Text = "";
-
-
-
                 }
             }
         }
@@ -174,7 +153,6 @@ private void lb_chat_DoubleClick(object sender, EventArgs e)
            {
                //Deletes message from database and listbox
                r.Db("chat").Table("chattable").Get(msg.Id).Delete().Run(pool);
-
            }
        //}
    }
