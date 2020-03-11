@@ -39,9 +39,6 @@ namespace Chat
         private void button_registo_Click(object sender, EventArgs e)
         {
 
-            
-
-           
 
             string username = textbox_username.Text;
             string password = textbox_password.Text;
