@@ -26,30 +26,6 @@ namespace Chat
         private void Form1_Load(object sender, EventArgs e)
         {
 
-            /*       try
-
-                   {
-
-
-                       for (int i = 0; i < 10; i++) {
-                           //Stablish connection to RethinkDB Server that is running on Raspberry
-                           var conn = r.ConnectionPool().Seed(new[] { "192.168.0.184:28015", "192.168.1.202:28015", "192.168.1.189:28015" });
-                           conn.PoolingStrategy(new EpsilonGreedyHostPool(new TimeSpan(0, 1, 0), EpsilonCalculator.Linear())).Discover(true);
-                           pool = conn.Connect();
-
-                           Thread.Sleep(1000);
-                        }
-
-
-
-                   }
-                   catch (Exception ex)
-                   {
-                       MessageBox.Show("Impossible to Connect!");
-                   }
-
-                   tb_mensagem.Text ="";
-                       */
 
             DataTable dt = new DataTable();
             NpgsqlConnection con = new NpgsqlConnection(conn);
@@ -59,7 +35,7 @@ namespace Chat
             dt.Load(cmd.ExecuteReader());
             List<DataRow> drList = dt.AsEnumerable().ToList();
 
-            DateTime data;
+            
 
             foreach (DataRow str in drList)
             {
@@ -74,9 +50,9 @@ namespace Chat
 
 
 
-            /*   focus_last_message();
+           
 
-               //Calling and running the task
+             /*  //Calling and running the task
                Task.Run(() => HandleUpdates(pool, lb_chat));*/
         }
 
