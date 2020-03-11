@@ -25,36 +25,11 @@ namespace Chat
 
         }
 
-       //Login
-        private void button1_Click(object sender, EventArgs e)
-        {
-            string username = textbox_username.Text;
-            string password = textbox_password.Text;
-
-            byte[] hash;
-            using (SHA256CryptoServiceProvider sha256 = new SHA256CryptoServiceProvider())
-            {
-                byte[] hashdata = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-                hash = hashdata;
-            }
-
-            string result = System.Text.Encoding.UTF8.GetString(hash);
-            NpgsqlConnection dbcon = new NpgsqlConnection(conn);
-
-            dbcon.Open();
-           String all_users = "SELECT FROM users";
-
-
-
-        }
-
+      
         private void Login_Load(object sender, EventArgs e)
         {
 
-            
-
-
-
+           
 
 
         }
@@ -69,7 +44,7 @@ namespace Chat
             NpgsqlConnection dbcon = new NpgsqlConnection(conn);
             
            dbcon.Open();
-
+            bool cont = true;
            // NpgsqlCommand dbcmd = dbcon.CreateCommand();
 
             string username = textbox_username.Text;
@@ -83,23 +58,96 @@ namespace Chat
             }
             string result = System.Text.Encoding.UTF8.GetString(hash);
 
-           
-            
+            try
+            {
+                DataTable dt = new DataTable();
+                NpgsqlConnection con = new NpgsqlConnection(conn);
+                String all_users = "SELECT *  FROM users";
+                NpgsqlCommand cmd = new NpgsqlCommand(all_users, con);
+                dt.Load(cmd.ExecuteReader());
+                List<DataRow> drList = dt.AsEnumerable().ToList();
+                foreach (DataRow str in drList)
+                {
+                    if (str.ItemArray[0].ToString().Equals(textbox_username.Text) && str.ItemArray[1].Equals(result))
+                    {
+                        cont = true;
+                        Chat ga = new Chat(textbox_username.Text);
+                        this.Hide();
+                        ga.ShowDialog();
+                        this.Close();
+                        break;
+                    }
 
-                string sql1 = "INSERT INTO users(username, password) VALUES ('" + username.ToString() + "','" + result.ToString() + "')";
-            NpgsqlCommand cmd = new NpgsqlCommand(sql1, dbcon);
+                }
 
-                  //dbcmd.CommandText = sql1;
-          
-           cmd.ExecuteNonQuery();
-            
+                if (cont == true)
+                {
+                    string sql1 = "INSERT INTO users(username, password) VALUES ('" + username.ToString() + "','" + result.ToString() + "')";
+                    NpgsqlCommand cmdo = new NpgsqlCommand(sql1, dbcon);
 
-           
+                    //dbcmd.CommandText = sql1;
 
+                    cmdo.ExecuteNonQuery();
+                    lb_alert.Text = "Registo Efetuado com Sucesso!";
+                    dbcon.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+         
            
         }
 
 
+        private void button_entrar_Click(object sender, EventArgs e)
+        {
+            string username = textbox_username.Text;
+            string password = textbox_password.Text;
+
+
+            byte[] hash;
+            using (SHA256CryptoServiceProvider sha256 = new SHA256CryptoServiceProvider())
+            {
+                byte[] hashdata = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+                hash = hashdata;
+            }
+
+            DataTable dt = new DataTable();
+           
+            string result = System.Text.Encoding.UTF8.GetString(hash);
+            NpgsqlConnection con = new NpgsqlConnection(conn);
+
+           
+            con.Open();
+            String all_users = "SELECT *  FROM users";
+            bool cont = false;
+
+            NpgsqlCommand cmd = new NpgsqlCommand(all_users, con);
+            dt.Load(cmd.ExecuteReader());
+            List<DataRow> drList = dt.AsEnumerable().ToList();
+            foreach(DataRow str in drList)
+            {
+                if (str.ItemArray[0].ToString().Equals(textbox_username.Text) && str.ItemArray[1].Equals(result))
+                {
+                    cont = true;
+                    Chat ga = new Chat(textbox_username.Text);
+                    this.Hide();
+                    ga.ShowDialog();
+                    this.Close();
+                    break;
+                }
+                
+            }
+            if (cont== false)
+            {
+                MessageBox.Show("Dados incorretos ou não está Registado!");
+            }
+
+            con.Close();
+        }
     }
 }
 

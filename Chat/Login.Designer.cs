@@ -41,14 +41,14 @@
             // 
             // textbox_username
             // 
-            this.textbox_username.Location = new System.Drawing.Point(86, 141);
+            this.textbox_username.Location = new System.Drawing.Point(97, 145);
             this.textbox_username.Name = "textbox_username";
             this.textbox_username.Size = new System.Drawing.Size(152, 20);
             this.textbox_username.TabIndex = 0;
             // 
             // textbox_password
             // 
-            this.textbox_password.Location = new System.Drawing.Point(86, 182);
+            this.textbox_password.Location = new System.Drawing.Point(97, 192);
             this.textbox_password.Name = "textbox_password";
             this.textbox_password.Size = new System.Drawing.Size(152, 20);
             this.textbox_password.TabIndex = 1;
@@ -56,7 +56,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(26, 184);
+            this.label3.Location = new System.Drawing.Point(25, 195);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(56, 13);
             this.label3.TabIndex = 4;
@@ -65,7 +65,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(26, 141);
+            this.label2.Location = new System.Drawing.Point(25, 148);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(58, 13);
             this.label2.TabIndex = 5;
@@ -79,6 +79,7 @@
             this.button_entrar.TabIndex = 6;
             this.button_entrar.Text = "Entrar";
             this.button_entrar.UseVisualStyleBackColor = true;
+            this.button_entrar.Click += new System.EventHandler(this.button_entrar_Click);
             // 
             // button_registo
             // 
