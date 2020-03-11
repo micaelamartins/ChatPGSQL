@@ -98,23 +98,23 @@ namespace Chat
                     //Creating a message
                     //
                     Mensagem mensagem = new Mensagem { Data = DateTime.Now,  Msg = message_text };
+                    
                     ///////////////////////////////////////////////focus_last_message();
-                   NpgsqlConnection dbcon = new NpgsqlConnection(conn);
-
-                    dbcon.Open();
+                    NpgsqlConnection con = new NpgsqlConnection(conn);
+                    con.Open();
 
                     try
                     {
 
                         //Writing the message on the Database    
-                        string sql1 = "INSERT INTO users(Username, Mensagem) VALUES ('" + username.ToString() + "','" + message_text.ToString() + "')";
-                        NpgsqlCommand cmdo = new NpgsqlCommand(sql1, dbcon);
+                        string sql1 = "INSERT INTO chattable(mensagem, username) VALUES ('" + message_text.ToString() + "','" + username.ToString() + "')";
+                        NpgsqlCommand cmdo = new NpgsqlCommand(sql1, con);
 
                         //dbcmd.CommandText = sql1;
 
                         cmdo.ExecuteNonQuery();
-                        lb_chat.Items.Add(mensagem);
-                        dbcon.Close();
+                      //  lb_chat.Items.Add(mensagem);
+                        con.Close();
 
 
 
