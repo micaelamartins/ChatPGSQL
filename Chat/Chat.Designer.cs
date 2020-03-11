@@ -64,6 +64,7 @@
             this.tb_mensagem.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.tb_mensagem.Size = new System.Drawing.Size(390, 53);
             this.tb_mensagem.TabIndex = 3;
+            this.tb_mensagem.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Textbox_KeyDown);
             // 
             // lb_username
             // 

@@ -41,11 +41,7 @@ namespace Chat
 
             
 
-            NpgsqlConnection dbcon = new NpgsqlConnection(conn);
-            
-           dbcon.Open();
-            bool cont = true;
-           // NpgsqlCommand dbcmd = dbcon.CreateCommand();
+           
 
             string username = textbox_username.Text;
             string password = textbox_password.Text;
@@ -58,24 +54,26 @@ namespace Chat
             }
             string result = System.Text.Encoding.UTF8.GetString(hash);
 
+            DataTable dt = new DataTable();
+            NpgsqlConnection con = new NpgsqlConnection(conn);
+            con.Open();
+            String all_users = "SELECT *  FROM users";
+            NpgsqlCommand cmd = new NpgsqlCommand(all_users, con);
+            dt.Load(cmd.ExecuteReader());
+            List<DataRow> drList = dt.AsEnumerable().ToList();
+
             try
             {
-                DataTable dt = new DataTable();
-                NpgsqlConnection con = new NpgsqlConnection(conn);
-                String all_users = "SELECT *  FROM users";
-                NpgsqlCommand cmd = new NpgsqlCommand(all_users, con);
-                dt.Load(cmd.ExecuteReader());
-                List<DataRow> drList = dt.AsEnumerable().ToList();
+                bool cont = true;
+
+
+
                 foreach (DataRow str in drList)
                 {
-                    if (str.ItemArray[0].ToString().Equals(textbox_username.Text) && str.ItemArray[1].Equals(result))
+                    if (str.ItemArray[0].ToString().Equals(textbox_username.Text))
                     {
-                        cont = true;
-                        Chat ga = new Chat(textbox_username.Text);
-                        this.Hide();
-                        ga.ShowDialog();
-                        this.Close();
-                        break;
+                        cont = false;
+                        MessageBox.Show("Ja existe o Username");
                     }
 
                 }
@@ -83,13 +81,13 @@ namespace Chat
                 if (cont == true)
                 {
                     string sql1 = "INSERT INTO users(username, password) VALUES ('" + username.ToString() + "','" + result.ToString() + "')";
-                    NpgsqlCommand cmdo = new NpgsqlCommand(sql1, dbcon);
+                    NpgsqlCommand cmdo = new NpgsqlCommand(sql1, con);
 
                     //dbcmd.CommandText = sql1;
 
                     cmdo.ExecuteNonQuery();
                     lb_alert.Text = "Registo Efetuado com Sucesso!";
-                    dbcon.Close();
+                    con.Close();
                 }
             }
             catch (Exception ex)
