@@ -17,7 +17,7 @@ namespace Chat
 {
     public partial class Login : Form
     {
-
+        string conn = "Server=192.168.1.202;port=5432;Database=chat;UserID=postgres;Password=mica";
         public Login()
         {
             InitializeComponent();
@@ -25,7 +25,7 @@ namespace Chat
 
         }
 
-  /*      //Login
+       //Login
         private void button1_Click(object sender, EventArgs e)
         {
             string username = textbox_username.Text;
@@ -39,37 +39,14 @@ namespace Chat
             }
 
             string result = System.Text.Encoding.UTF8.GetString(hash);
+            NpgsqlConnection dbcon = new NpgsqlConnection(conn);
 
-            try {
-                List<Users> all_users = r.Db("chat").Table("users").OrderBy("Username").Run<List<Users>>(pool);
-                bool cont = false;
+            dbcon.Open();
+           String all_users = "SELECT FROM users";
 
-                foreach (var us in all_users)
-                {
-                    string use = us.Username;
-                    string pwd = us.Password;
-                    if (use.ToString().Equals(textbox_username.Text) && pwd.ToString().Equals(result))
-                    {
-                        cont = true;
-                        Chat ga = new Chat(textbox_username.Text);
-                        this.Hide();
-                        ga.ShowDialog();
-                        this.Close();
-                        break;
-                    }
 
-                }
-                if (cont == false)
-                {
-                    MessageBox.Show("Dados incorretos ou não está Registado!");
-                }
-            }
-            catch(Exception ex)
-            {
-                Login_Load(sender, e);
-            }
-            
-        }*/
+
+        }
 
         private void Login_Load(object sender, EventArgs e)
         {
@@ -87,7 +64,7 @@ namespace Chat
         private void button_registo_Click(object sender, EventArgs e)
         {
 
-            string conn = "Server=192.168.1.202;port=5432;Database=chat;UserID=postgres;Password=mica";
+            
 
             NpgsqlConnection dbcon = new NpgsqlConnection(conn);
             
@@ -109,7 +86,7 @@ namespace Chat
            
             
 
-                string sql1 = "INSERT INTO users(id,username, password) VALUES (1,'" + username.ToString() + "','" + password.ToString() + "')";
+                string sql1 = "INSERT INTO users(username, password) VALUES ('" + username.ToString() + "','" + result.ToString() + "')";
             NpgsqlCommand cmd = new NpgsqlCommand(sql1, dbcon);
 
                   //dbcmd.CommandText = sql1;
@@ -121,6 +98,8 @@ namespace Chat
 
            
         }
+
+
     }
 }
 
