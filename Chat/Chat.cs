@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Threading;
 using Npgsql;
+using System.Linq;
 
 namespace Chat
 {
@@ -18,59 +19,67 @@ namespace Chat
         {
             InitializeComponent();
             lb_username.Text = text;
-            
+
 
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
 
-     /*       try
+            /*       try
 
+                   {
+
+
+                       for (int i = 0; i < 10; i++) {
+                           //Stablish connection to RethinkDB Server that is running on Raspberry
+                           var conn = r.ConnectionPool().Seed(new[] { "192.168.0.184:28015", "192.168.1.202:28015", "192.168.1.189:28015" });
+                           conn.PoolingStrategy(new EpsilonGreedyHostPool(new TimeSpan(0, 1, 0), EpsilonCalculator.Linear())).Discover(true);
+                           pool = conn.Connect();
+
+                           Thread.Sleep(1000);
+                        }
+
+
+
+                   }
+                   catch (Exception ex)
+                   {
+                       MessageBox.Show("Impossible to Connect!");
+                   }
+
+                   tb_mensagem.Text ="";
+                       */
+
+            DataTable dt = new DataTable();
+            NpgsqlConnection con = new NpgsqlConnection(conn);
+            con.Open();
+            String all_users = "SELECT *  FROM chattable";
+            NpgsqlCommand cmd = new NpgsqlCommand(all_users, con);
+            dt.Load(cmd.ExecuteReader());
+            List<DataRow> drList = dt.AsEnumerable().ToList();
+
+            DateTime data;
+
+            foreach (DataRow str in drList)
             {
-               
 
-                for (int i = 0; i < 10; i++) {
-                    //Stablish connection to RethinkDB Server that is running on Raspberry
-                    var conn = r.ConnectionPool().Seed(new[] { "192.168.0.184:28015", "192.168.1.202:28015", "192.168.1.189:28015" });
-                    conn.PoolingStrategy(new EpsilonGreedyHostPool(new TimeSpan(0, 1, 0), EpsilonCalculator.Linear())).Discover(true);
-                    pool = conn.Connect();
-                   
-                    Thread.Sleep(1000);
-                 }
-                
+                Mensagem msg = new Mensagem(str.ItemArray[0].ToString(), DateTime.Parse(str.ItemArray[3].ToString()), str.ItemArray[1].ToString(), str.ItemArray[2].ToString());
+                //Adding Message to Listbox
+                lb_chat.Items.Add(msg);
 
-               
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Impossible to Connect!");
             }
 
-            tb_mensagem.Text ="";
-            
-
-
-            //Get all messages from RethinkDB
-            List<Mensagem> all_messages = r.Db("chat").Table("chattable").OrderBy("Data").Run<List<Mensagem>>(pool);
-                
+            focus_last_message();
 
 
 
-                //Load all previous messages to the listbox of messages
-                foreach (var message in all_messages)
-                {
-                    //Create message
-                    Mensagem msg = new Mensagem(message.Id, message.Data, message.Username, message.Msg);
-                    //Adding Message to Listbox
-                    lb_chat.Items.Add(msg);
-                }
-                focus_last_message();
+            /*   focus_last_message();
 
-                //Calling and running the task
-                Task.Run(() => HandleUpdates(pool, lb_chat));*/
-            }
-        
+               //Calling and running the task
+               Task.Run(() => HandleUpdates(pool, lb_chat));*/
+        }
+
 
 
         private void Textbox_KeyDown(object sender, KeyEventArgs e)
@@ -85,7 +94,7 @@ namespace Chat
                     tb_mensagem.AppendText(Environment.NewLine);
                 }
                 //if there is no username available enter will warn that it needs a username
-               
+
                 //if message textbox is empty it wont do anything
                 else if (string.IsNullOrWhiteSpace(tb_mensagem.Text)) ;
                 //if everything is ok successfully send and save message
@@ -93,13 +102,15 @@ namespace Chat
                 {
                     //getting the information to a variable
                     string username = lb_username.Text;
-                    
+
                     string message_text = tb_mensagem.Text;
+                    String data = DateTime.Now.ToString();
+                    
                     //Creating a message
                     //
-                    Mensagem mensagem = new Mensagem { Data = DateTime.Now,  Msg = message_text };
-                    
-                    ///////////////////////////////////////////////focus_last_message();
+                    Mensagem mensagem = new Mensagem { Data = DateTime.Now, Msg = message_text };
+
+                   focus_last_message();
                     NpgsqlConnection con = new NpgsqlConnection(conn);
                     con.Open();
 
@@ -107,30 +118,30 @@ namespace Chat
                     {
 
                         //Writing the message on the Database    
-                        string sql1 = "INSERT INTO chattable(mensagem, username) VALUES ('" + message_text.ToString() + "','" + username.ToString() + "')";
+                        string sql1 = "INSERT INTO chattable(mensagem, username, data) VALUES ('" + message_text.ToString() + "','" + username.ToString() + "','" + data + "')";
                         NpgsqlCommand cmdo = new NpgsqlCommand(sql1, con);
 
                         //dbcmd.CommandText = sql1;
 
                         cmdo.ExecuteNonQuery();
-                      //  lb_chat.Items.Add(mensagem);
+                        //  lb_chat.Items.Add(mensagem);
                         con.Close();
 
 
 
 
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         tb_mensagem.Text = "Trying to Reconnect...";
 
                         Form1_Load(sender, e);
                     }
-                    
+
 
                     //Clean up
                     tb_mensagem.Text = "";
-                    
+
 
 
                 }
@@ -191,18 +202,19 @@ private void lb_chat_DoubleClick(object sender, EventArgs e)
            }
        //}
    }
-}
+} */
 
-//Focus on the last message (this is for the listbox to automaticly scroll down to the last message)
-public void focus_last_message()
-{
-   if (lb_chat.Items.Count != 0)
-   {
-       lb_chat.SetSelected(lb_chat.Items.Count - 1, true);
-       lb_chat.SetSelected(lb_chat.Items.Count - 1, false);
-   }*/
+        //Focus on the last message (this is for the listbox to automaticly scroll down to the last message)
+        public void focus_last_message()
+        {
+            if (lb_chat.Items.Count != 0)
+            {
+                lb_chat.SetSelected(lb_chat.Items.Count - 1, true);
+                lb_chat.SetSelected(lb_chat.Items.Count - 1, false);
+            }
+        }
     }
-    }
+}
 
 
 
